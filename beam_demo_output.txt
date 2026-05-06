@@ -1,0 +1,147 @@
+vemistry@vemistry:~/beam-demo$  source /home/vemistry/beam-demo/venv/bin/activate
+(venv) vemistry@vemistry:~/beam-demo$ /home/vemistry/beam-demo/venv/bin/python /home/vemistry/beam-demo/beam_demo.py
+
+Starting Apache Beam Demo...
+
+============================================================
+APACHE BEAM - BIG DATA PROCESSING DEMO
+============================================================
+
+[STEP 1] Reading data from 5 CSV files...
+INFO:apache_beam.runners.direct.direct_runner:Running pipeline with PrismRunner.
+INFO:apache_beam.runners.worker.worker_pool_main:Listening for workers at localhost:36477
+INFO:apache_beam.runners.portability.prism_runner:Downloading prism from https://github.com/apache/beam/releases/download/v2.73.0/apache_beam-v2.73.0-prism-linux-amd64.zip
+INFO:apache_beam.runners.portability.prism_runner:Unzipping prism from /home/vemistry/.apache_beam/cache/prism/bin/apache_beam-v2.73.0-prism-linux-amd64.zip to /home/vemistry/.apache_beam/cache/prism/bin/apache_beam-v2.73.0-prism-linux-amd64
+INFO:apache_beam.runners.portability.prism_runner:Prism binary path resolved to: /home/vemistry/.apache_beam/cache/prism/bin/apache_beam-v2.73.0-prism-linux-amd64
+INFO:apache_beam.utils.subprocess_server:Starting service with ('/home/vemistry/.apache_beam/cache/prism/bin/apache_beam-v2.73.0-prism-linux-amd64' '--job_port' '57079' '--log_level' 'info' '--log_kind' 'json' '--serve_http=false')
+INFO:PrismRunner:Serving JobManagement (endpoint='localhost:57079')
+INFO:apache_beam.runners.portability.portable_runner:Environment "LOOPBACK" has started a component necessary for the execution. Be sure to run the pipeline using
+  with Pipeline() as p:
+    p.apply(..)
+This ensures that the pipeline finishes before this program exits.
+INFO:apache_beam.runners.worker.statecache:Creating state cache with size 0
+INFO:apache_beam.runners.worker.sdk_worker:Creating insecure control channel for localhost:57079.
+INFO:apache_beam.runners.portability.portable_runner:Job state changed to STOPPED
+INFO:root:starting job-001[job]
+INFO:root:running job-001[job]
+INFO:apache_beam.runners.worker.sdk_worker:Control channel established.
+INFO:apache_beam.runners.portability.portable_runner:Job state changed to RUNNING
+INFO:apache_beam.runners.worker.sdk_worker:Initializing SDKHarness with unbounded number of workers.
+INFO:apache_beam.runners.worker.sdk_worker:Creating insecure state channel for localhost:57079.
+INFO:apache_beam.runners.worker.sdk_worker:State channel established.
+INFO:apache_beam.runners.worker.data_plane:Creating client data channel for localhost:57079
+INFO:apache_beam.runners.worker.data_plane:Data channel established.
+HIGH TRAFFIC: http://facebook.com - 17979962 phút
+URL: http://facebook.com
+  - Tổng thời gian: 17979962 phút
+  - Số lần truy cập: 73552
+  - Thời gian trung bình: 244.45 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+
+HIGH TRAFFIC: https://open.spotify.com - 17933894 phút
+URL: https://open.spotify.com
+  - Tổng thời gian: 17933894 phút
+  - Số lần truy cập: 73259
+  - Thời gian trung bình: 244.8 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+
+HIGH TRAFFIC: https://youtube.com - 18077251 phút
+URL: https://youtube.com
+  - Tổng thời gian: 18077251 phút
+  - Số lần truy cập: 73801
+  - Thời gian trung bình: 244.95 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+
+HIGH TRAFFIC: https://chat.zalo.me - 18060941 phút
+URL: https://chat.zalo.me
+  - Tổng thời gian: 18060941 phút
+  - Số lần truy cập: 73844
+  - Thời gian trung bình: 244.58 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+
+HIGH TRAFFIC: https://tuoitre.vn - 18142631 phút
+URL: https://tuoitre.vn
+  - Tổng thời gian: 18142631 phút
+  - Số lần truy cập: 74117
+  - Thời gian trung bình: 244.78 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+
+HIGH TRAFFIC: https://zingnews.vn - 18124592 phút
+URL: https://zingnews.vn
+  - Tổng thời gian: 18124592 phút
+  - Số lần truy cập: 74261
+  - Thời gian trung bình: 244.07 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+
+HIGH TRAFFIC: https://www.instagram.com - 17913683 phút
+URL: https://www.instagram.com
+  - Tổng thời gian: 17913683 phút
+  - Số lần truy cập: 73099
+  - Thời gian trung bình: 245.06 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+
+HIGH TRAFFIC: https://tinhte.vn - 18071893 phút
+URL: https://tinhte.vn
+  - Tổng thời gian: 18071893 phút
+  - Số lần truy cập: 74067
+  - Thời gian trung bình: 243.99 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+
+INFO:PrismRunner:pipeline done! (job='job-001[job]')
+INFO:root:pipeline completed job-001[job]
+INFO:root:terminating job-001[job]
+INFO:apache_beam.runners.portability.portable_runner:Job state changed to DONE
+INFO:apache_beam.runners.worker.sdk_worker:No more requests from control plane
+INFO:apache_beam.runners.worker.sdk_worker:SDK Harness waiting for in-flight requests to complete
+INFO:apache_beam.runners.worker.data_plane:Closing all cached grpc data channels.
+INFO:apache_beam.runners.worker.sdk_worker:Closing all cached gRPC state handlers.
+
+[COMPLETED] Beam pipeline execution finished!INFO:apache_beam.runners.worker.sdk_worker:Done consuming work.
+
+
+============================================================
+APACHE BEAM - ADVANCED PIPELINE (Top URLs)
+============================================================
+INFO:apache_beam.runners.direct.direct_runner:Running pipeline with PrismRunner.
+INFO:apache_beam.runners.worker.worker_pool_main:Listening for workers at localhost:41111
+INFO:apache_beam.runners.portability.portable_runner:Environment "LOOPBACK" has started a component necessary for the execution. Be sure to run the pipeline using
+  with Pipeline() as p:
+    p.apply(..)
+This ensures that the pipeline finishes before this program exits.
+INFO:apache_beam.runners.worker.statecache:Creating state cache with size 0
+INFO:apache_beam.runners.worker.sdk_worker:Creating insecure control channel for localhost:57079.
+INFO:root:starting job-002[job]
+INFO:apache_beam.runners.worker.sdk_worker:Control channel established.
+INFO:apache_beam.runners.worker.sdk_worker:Initializing SDKHarness with unbounded number of workers.
+INFO:root:running job-002[job]
+INFO:apache_beam.runners.portability.portable_runner:Job state changed to RUNNING
+INFO:apache_beam.runners.worker.sdk_worker:Creating insecure state channel for localhost:57079.
+INFO:apache_beam.runners.worker.sdk_worker:State channel established.
+INFO:apache_beam.runners.worker.data_plane:Creating client data channel for localhost:57079
+INFO:apache_beam.runners.worker.data_plane:Data channel established.
+#1: https://tuoitre.vn - 18142631 phút
+#2: https://zingnews.vn - 18124592 phút
+#3: https://youtube.com - 18077251 phút
+#4: https://tinhte.vn - 18071893 phút
+#5: https://chat.zalo.me - 18060941 phút
+INFO:PrismRunner:pipeline done! (job='job-002[job]')
+INFO:root:pipeline completed job-002[job]
+INFO:root:terminating job-002[job]
+INFO:apache_beam.runners.portability.portable_runner:Job state changed to DONE
+INFO:apache_beam.runners.worker.sdk_worker:No more requests from control plane
+INFO:apache_beam.runners.worker.sdk_worker:SDK Harness waiting for in-flight requests to complete
+INFO:apache_beam.runners.worker.data_plane:Closing all cached grpc data channels.
+INFO:apache_beam.runners.worker.sdk_worker:Closing all cached gRPC state handlers.
+
+[COMPLETED] Advanced Beam pipeline execution finished!INFO:apache_beam.runners.worker.sdk_worker:Done consuming work.
+
+
+Demo completed!
