@@ -32,7 +32,7 @@ class CalculateStats(beam.DoFn):
     """Calculate statistics for each URL from grouped elements"""
     def process(self, element):
         url, times = element
-        times_list = list(times)  # times lúc này là một iterable do GroupByKey tạo ra
+        times_list = list(times)
         total_time = sum(times_list)
         count = len(times_list)
         avg_time = total_time / count if count > 0 else 0
@@ -64,31 +64,24 @@ def run_simple_beam_pipeline():
     """Simplified Beam Pipeline with resource tracking"""
     start_time = time.time()
     process = psutil.Process()
-
     options = PipelineOptions(runner='DirectRunner')
 
     with beam.Pipeline(options=options) as pipeline:
         results = (
             pipeline
-            # Thêm skip_header_lines=1 nếu tất cả các file CSV của Sếp đều có header
             | 'Read Files' >> ReadFromText('/home/vemistry/beam-demo/data/bt1_data*.csv')
             | 'Parse CSV' >> ParDo(ParseCSV())
             
-            # SỬ DỤNG GROUPBYKEY THAY VÌ COMBINEPERKEY ĐỂ LẤY LIST VALUES
             | 'Group by URL' >> beam.GroupByKey()
             
-            # Đưa vào hàm tính toán chi tiết của Sếp
+            # Đưa vào hàm tính toán 
             | 'Calculate Statistics' >> ParDo(CalculateStats())
             
-            # Format lại output thành chuỗi đẹp mắt
+            # Format lại output thành chuỗi
             | 'Format Output' >> Map(format_output)
         )
-
         # In kết quả ra console (Local testing)
         results | 'Print Results' >> Map(print)
-        
-        # Nếu Sếp muốn lưu ra file thì uncomment dòng dưới:
-        # results | 'Write to File' >> WriteToText('/home/vemistry/beam-demo/output/results', file_name_suffix='.txt')
 
     end_time = time.time()
     memory_usage = process.memory_info().rss / (1024 * 1024)  # Convert to MB

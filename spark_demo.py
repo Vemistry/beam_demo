@@ -37,23 +37,23 @@ def run_simple_spark_pipeline():
     start_time = time.time()
     process = psutil.Process()
 
-    # Khởi tạo SparkSession và tắt thanh tiến trình ở console
+    # Khởi tạo SparkSession
     spark = SparkSession.builder \
         .appName("Simple-Spark-Demo") \
         .master("local[*]") \
         .config("spark.ui.showConsoleProgress", "false") \
         .getOrCreate()
         
-    # 2. Tắt các log WARN/INFO của lõi Spark (chỉ giữ Lỗi nghiêm trọng)
+    # Tắt các log WARN/INFO của lõi Spark
     spark.sparkContext.setLogLevel("ERROR")
 
-    # 3. Kỹ thuật Schema-on-Read: Định nghĩa khung xương dữ liệu từ đầu
+    # Schema-on-Read:
     schema = StructType([
         StructField("url", StringType(), True),
         StructField("time_minutes", IntegerType(), True)
     ])
 
-    # Đọc dữ liệu và ốp thẳng schema vào (bỏ header=False do mặc định là False)
+    # Đọc dữ liệu và áp dụng vào schema
     df = spark.read.csv(
         '/home/vemistry/beam-demo/data/bt1_data*.csv',
         schema=schema
