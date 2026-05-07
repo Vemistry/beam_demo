@@ -5,7 +5,6 @@ Xử lý dữ liệu lớn từ 5 file CSV bằng Apache Beam
 Tính toán: URL nào được truy cập nhiều, thời gian trung bình, max, min.
 """
 
-# Import các thư viện cần thiết
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.io import ReadFromText, WriteToText
@@ -14,13 +13,11 @@ import logging
 import time
 import psutil
 
-# Cấu hình log để chỉ hiển thị cảnh báo và lỗi
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Lớp xử lý từng dòng CSV
-# Bước này chuyển đổi từng dòng CSV thành tuple (url, time)
 class ParseCSV(beam.DoFn):
+    """Parse CSV lines to (url, time) tuples"""
     def process(self, line):
         if line.strip():
             try:
@@ -29,14 +26,13 @@ class ParseCSV(beam.DoFn):
                 time_minutes = int(parts[1].strip())
                 yield (url, time_minutes)
             except (IndexError, ValueError) as e:
-                logger.warning(f"Bỏ qua dòng không hợp lệ: {line} - Lỗi: {e}")
+                logger.warning(f"Bỏ qua dòng không hợp lệ (có thể là header): {line} - Lỗi: {e}")
 
-# Lớp tính toán thống kê
-# Bước này tính tổng, trung bình, tối đa, tối thiểu cho mỗi URL
 class CalculateStats(beam.DoFn):
+    """Calculate statistics for each URL from grouped elements"""
     def process(self, element):
         url, times = element
-        times_list = list(times)
+        times_list = list(times)  # times lúc này là một iterable do GroupByKey tạo ra
         total_time = sum(times_list)
         count = len(times_list)
         avg_time = total_time / count if count > 0 else 0
@@ -52,31 +48,52 @@ class CalculateStats(beam.DoFn):
             'min_time': min_time
         }
 
-# Hàm chính chạy pipeline Beam
-# Bước này định nghĩa pipeline và các bước xử lý
-if __name__ == "__main__":
+def format_output(stats_dict):
+    """Format statistics for output"""
+    return (
+        f"URL: {stats_dict['url']}\n"
+        f"  - Tổng thời gian: {stats_dict['total_time']} phút\n"
+        f"  - Số lần truy cập: {stats_dict['visit_count']}\n"
+        f"  - Thời gian trung bình: {stats_dict['avg_time']} phút\n"
+        f"  - Thời gian tối đa: {stats_dict['max_time']} phút\n"
+        f"  - Thời gian tối thiểu: {stats_dict['min_time']} phút\n"
+        f"--------------------------------------------------"
+    )
+
+def run_simple_beam_pipeline():
+    """Simplified Beam Pipeline with resource tracking"""
     start_time = time.time()
     process = psutil.Process()
 
-    # Cấu hình pipeline
-    options = PipelineOptions()
-    with beam.Pipeline(options=options) as p:
-        (
-            p
-            # Đọc dữ liệu từ các file CSV
-            | "Đọc dữ liệu" >> ReadFromText("data/*.csv", skip_header_lines=1)
-            # Phân tích từng dòng CSV
-            | "Phân tích CSV" >> beam.ParDo(ParseCSV())
-            # Nhóm dữ liệu theo URL
-            | "Nhóm theo URL" >> beam.GroupByKey()
-            # Tính toán thống kê
-            | "Tính toán thống kê" >> beam.ParDo(CalculateStats())
-            # Ghi kết quả ra file
-            | "Ghi kết quả" >> WriteToText("beam_demo_output.txt")
+    options = PipelineOptions(runner='DirectRunner')
+
+    with beam.Pipeline(options=options) as pipeline:
+        results = (
+            pipeline
+            # Thêm skip_header_lines=1 nếu tất cả các file CSV của Sếp đều có header
+            | 'Read Files' >> ReadFromText('/home/vemistry/beam-demo/data/bt1_data*.csv')
+            | 'Parse CSV' >> ParDo(ParseCSV())
+            
+            # SỬ DỤNG GROUPBYKEY THAY VÌ COMBINEPERKEY ĐỂ LẤY LIST VALUES
+            | 'Group by URL' >> beam.GroupByKey()
+            
+            # Đưa vào hàm tính toán chi tiết của Sếp
+            | 'Calculate Statistics' >> ParDo(CalculateStats())
+            
+            # Format lại output thành chuỗi đẹp mắt
+            | 'Format Output' >> Map(format_output)
         )
 
-    # Theo dõi tài nguyên sử dụng
-    elapsed_time = time.time() - start_time
-    memory_usage = process.memory_info().rss / (1024 * 1024)
-    print(f"Thời gian chạy: {elapsed_time:.2f} giây")
-    print(f"Bộ nhớ sử dụng: {memory_usage:.2f} MB")
+        # In kết quả ra console (Local testing)
+        results | 'Print Results' >> Map(print)
+        
+        # Nếu Sếp muốn lưu ra file thì uncomment dòng dưới:
+        # results | 'Write to File' >> WriteToText('/home/vemistry/beam-demo/output/results', file_name_suffix='.txt')
+
+    end_time = time.time()
+    memory_usage = process.memory_info().rss / (1024 * 1024)  # Convert to MB
+    print(f"Execution Time: {end_time - start_time:.2f} seconds")
+    print(f"Memory Usage: {memory_usage:.2f} MB")
+
+if __name__ == '__main__':
+    run_simple_beam_pipeline()
