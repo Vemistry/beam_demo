@@ -110,10 +110,3 @@ URL: http://facebook.com
 - Thời gian thực thi: 7.27 giây
 - Bộ nhớ sử dụng: 65.64 MB
 
-## So Sánh
-
-| Tính Năng              | Apache Beam                  | Apache Spark                 |
-|------------------------|------------------------------|------------------------------|
-| Loại Framework         | Batch và streaming          | Batch và streaming          |
-| Hỗ Trợ Ngôn Ngữ        | Python, Java, Go, v.v.      | Python, Scala, Java, v.v.   |
-| Môi Trường Chạy        | Linh hoạt (local, cloud, v.v.)| Local, cluster-based        |
