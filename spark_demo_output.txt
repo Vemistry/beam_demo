@@ -1,102 +1,62 @@
-vemistry@vemistry:~/beam-demo$  source /home/vemistry/beam-demo/venv/bin/activate
 (venv) vemistry@vemistry:~/beam-demo$ /home/vemistry/beam-demo/venv/bin/python /home/vemistry/beam-demo/spark_demo.py
-============================================================
-APACHE SPARK - BIG DATA PROCESSING DEMO
-============================================================
 WARNING: Using incubator modules: jdk.incubator.vector
 Setting default log level to "WARN".
 To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-
-[STEP 1] Reading data...
-Total records loaded: 590000
-
-[STEP 2] Sample data:
-+--------------------+------------+
-|                 url|time_minutes|
-+--------------------+------------+
-|https://open.spot...|         316|
-| https://zingnews.vn|         452|
-| https://youtube.com|         287|
-| https://zingnews.vn|         430|
-| https://zingnews.vn|         318|
-+--------------------+------------+
-only showing top 5 rows
-
-[STEP 3] Statistics per URL:
-+-------------------------+----------+-----------+--------+--------+--------+   
-|url                      |total_time|visit_count|avg_time|max_time|min_time|
-+-------------------------+----------+-----------+--------+--------+--------+
-|https://tuoitre.vn       |18142631  |74117      |244.78  |479     |10      |
-|https://zingnews.vn      |18124592  |74261      |244.07  |479     |10      |
-|https://youtube.com      |18077251  |73801      |244.95  |479     |10      |
-|https://tinhte.vn        |18071893  |74067      |243.99  |479     |10      |
-|https://chat.zalo.me     |18060941  |73844      |244.58  |479     |10      |
-|http://facebook.com      |17979962  |73552      |244.45  |479     |10      |
-|https://open.spotify.com |17933894  |73259      |244.8   |479     |10      |
-|https://www.instagram.com|17913683  |73099      |245.06  |479     |10      |
-+-------------------------+----------+-----------+--------+--------+--------+
-
-
-[STEP 4] High traffic (>1000):
-+-------------------------+----------+-----------+--------+--------+--------+
-|url                      |total_time|visit_count|avg_time|max_time|min_time|
-+-------------------------+----------+-----------+--------+--------+--------+
-|https://tuoitre.vn       |18142631  |74117      |244.78  |479     |10      |
-|https://zingnews.vn      |18124592  |74261      |244.07  |479     |10      |
-|https://youtube.com      |18077251  |73801      |244.95  |479     |10      |
-|https://tinhte.vn        |18071893  |74067      |243.99  |479     |10      |
-|https://chat.zalo.me     |18060941  |73844      |244.58  |479     |10      |
-|http://facebook.com      |17979962  |73552      |244.45  |479     |10      |
-|https://open.spotify.com |17933894  |73259      |244.8   |479     |10      |
-|https://www.instagram.com|17913683  |73099      |245.06  |479     |10      |
-+-------------------------+----------+-----------+--------+--------+--------+
-
-
-[STEP 5] Top 5 URLs:
-#1: https://tuoitre.vn - 18142631 phút
-#2: https://zingnews.vn - 18124592 phút
-#3: https://youtube.com - 18077251 phút
-#4: https://tinhte.vn - 18071893 phút
-#5: https://chat.zalo.me - 18060941 phút
-
-[STEP 6] Overall stats:
-- Records: 590000
-- Total time: 144304847
-- Avg time: 244.58
-- Unique URLs: 8
-
-DONE SPARK PIPELINE!
-
-============================================================
-SPARK SQL DEMO
-============================================================
-
-Top 5 most visited:
-+--------------------+------+----------+
-|url                 |visits|total_time|
-+--------------------+------+----------+
-|https://zingnews.vn |74261 |18124592  |
-|https://tuoitre.vn  |74117 |18142631  |
-|https://tinhte.vn   |74067 |18071893  |
-|https://chat.zalo.me|73844 |18060941  |
-|https://youtube.com |73801 |18077251  |
-+--------------------+------+----------+
-
-
-High engagement:
-+-------------------------+------------------+
-|url                      |avg_time          |
-+-------------------------+------------------+
-|https://www.instagram.com|245.0605753840682 |
-|https://youtube.com      |244.9458814921207 |
-|https://open.spotify.com |244.80123943815778|
-|https://tuoitre.vn       |244.78366636534128|
-|https://chat.zalo.me     |244.5823763609772 |
-|http://facebook.com      |244.45238742658256|
-|https://zingnews.vn      |244.06609121880933|
-|https://tinhte.vn        |243.99385691333524|
-+-------------------------+------------------+
-
-
-DONE SQL PIPELINE!
-INFO:py4j.clientserver:Closing down clientserver connection
+URL: http://facebook.com
+  - Tổng thời gian: 17979962 phút
+  - Số lần truy cập: 73552
+  - Thời gian trung bình: 244.45 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+--------------------------------------------------
+URL: https://tinhte.vn
+  - Tổng thời gian: 18071893 phút
+  - Số lần truy cập: 74067
+  - Thời gian trung bình: 243.99 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+--------------------------------------------------
+URL: https://tuoitre.vn
+  - Tổng thời gian: 18142631 phút
+  - Số lần truy cập: 74117
+  - Thời gian trung bình: 244.78 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+--------------------------------------------------
+URL: https://chat.zalo.me
+  - Tổng thời gian: 18060941 phút
+  - Số lần truy cập: 73844
+  - Thời gian trung bình: 244.58 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+--------------------------------------------------
+URL: https://zingnews.vn
+  - Tổng thời gian: 18124592 phút
+  - Số lần truy cập: 74261
+  - Thời gian trung bình: 244.07 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+--------------------------------------------------
+URL: https://www.instagram.com
+  - Tổng thời gian: 17913683 phút
+  - Số lần truy cập: 73099
+  - Thời gian trung bình: 245.06 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+--------------------------------------------------
+URL: https://youtube.com
+  - Tổng thời gian: 18077251 phút
+  - Số lần truy cập: 73801
+  - Thời gian trung bình: 244.95 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+--------------------------------------------------
+URL: https://open.spotify.com
+  - Tổng thời gian: 17933894 phút
+  - Số lần truy cập: 73259
+  - Thời gian trung bình: 244.8 phút
+  - Thời gian tối đa: 479 phút
+  - Thời gian tối thiểu: 10 phút
+--------------------------------------------------
+Execution Time: 7.27 seconds
+Memory Usage: 65.64 MB

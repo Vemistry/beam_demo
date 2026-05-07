@@ -1,137 +1,86 @@
 """
 Apache Spark Pipeline Demo
 ===========================
-Fixed version - không lỗi column + chạy ổn định
+Xử lý dữ liệu lớn từ 5 file CSV bằng Apache Beam
+Tính toán: URL nào được truy cập nhiều, thời gian trung bình, max, min.
 """
 
+# Import các thư viện cần thiết
 from pyspark.sql import SparkSession
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 from pyspark.sql.functions import (
-    col, sum as spark_sum, count, avg,
+    sum as spark_sum, count, avg,
     max as spark_max, min as spark_min, round as spark_round
 )
 import logging
+import time
+import psutil
 
-logging.basicConfig(level=logging.INFO)
+# Cấu hình log để chỉ hiển thị lỗi nghiêm trọng
+logging.getLogger("py4j").setLevel(logging.ERROR)
+logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
-
-def run_spark_pipeline():
-    print("=" * 60)
-    print("APACHE SPARK - BIG DATA PROCESSING DEMO")
-    print("=" * 60)
-
-    spark = SparkSession.builder \
-        .appName("Beam-vs-Spark-Demo") \
-        .master("local[*]") \
-        .getOrCreate()
-
-    print("\n[STEP 1] Reading data...")
-
-    df = spark.read.csv(
-        '/home/vemistry/beam-demo/data/bt1_data*.csv',
-        header=False,
-        inferSchema=False
-    ).toDF("url", "time_minutes")
-
-    # cast an toàn
-    df = df.withColumn("time_minutes", col("time_minutes").cast("int"))
-
-    print(f"Total records loaded: {df.count()}")
-
-    print("\n[STEP 2] Sample data:")
-    df.show(5)
-
-    print("\n[STEP 3] Statistics per URL:")
-
-    stats_df = df.groupBy("url").agg(
-        spark_sum("time_minutes").alias("total_time"),
-        count("time_minutes").alias("visit_count"),
-        avg("time_minutes").alias("avg_time"),
-        spark_max("time_minutes").alias("max_time"),
-        spark_min("time_minutes").alias("min_time")
+# Hàm định dạng kết quả đầu ra giống Apache Beam
+# Đây là bước định dạng dữ liệu để hiển thị dễ đọc hơn
+def format_spark_row(row):
+    return (
+        f"URL: {row['url']}\n"
+        f"  - Tổng thời gian: {row['total_time']} phút\n"
+        f"  - Số lần truy cập: {row['visit_count']}\n"
+        f"  - Thời gian trung bình: {row['avg_time']} phút\n"
+        f"  - Thời gian tối đa: {row['max_time']} phút\n"
+        f"  - Thời gian tối thiểu: {row['min_time']} phút\n"
+        f"--------------------------------------------------"
     )
 
-    stats_df = stats_df.withColumn(
-        "avg_time",
-        spark_round(col("avg_time"), 2)
-    ).orderBy(col("total_time").desc())
+# Hàm chính chạy pipeline Spark
+# Bước này khởi tạo SparkSession và cấu hình log
+# Đọc dữ liệu từ các file CSV, xử lý và tính toán thống kê
+def run_simple_spark_pipeline():
+    start_time = time.time()
+    process = psutil.Process()
 
-    stats_df.show(truncate=False)
-
-    print("\n[STEP 4] High traffic (>1000):")
-    high_traffic_df = stats_df.filter(col("total_time") > 1000)
-    high_traffic_df.show(truncate=False)
-
-    print("\n[STEP 5] Top 5 URLs:")
-    top5 = stats_df.limit(5).collect()
-
-    for i, row in enumerate(top5, 1):
-        print(f"#{i}: {row['url']} - {row['total_time']} phút")
-
-    print("\n[STEP 6] Overall stats:")
-
-    total_records = df.count()
-    total_time = df.agg(spark_sum("time_minutes")).collect()[0][0]
-    avg_time = df.agg(avg("time_minutes")).collect()[0][0]
-    unique_urls = df.select("url").distinct().count()
-
-    print(f"- Records: {total_records}")
-    print(f"- Total time: {total_time}")
-    print(f"- Avg time: {avg_time:.2f}")
-    print(f"- Unique URLs: {unique_urls}")
-
-    spark.stop()
-    print("\n DONE SPARK PIPELINE!")
-
-
-def run_sql_pipeline():
-    print("\n" + "=" * 60)
-    print("SPARK SQL DEMO")
-    print("=" * 60)
-
+    # Khởi tạo SparkSession
     spark = SparkSession.builder \
-        .appName("Spark-SQL") \
+        .appName("Simple-Spark-Demo") \
         .master("local[*]") \
+        .config("spark.ui.showConsoleProgress", "false") \
         .getOrCreate()
 
-    df = spark.read.csv(
-        '/home/vemistry/beam-demo/data/bt1_data*.csv',
-        header=False
-    ).toDF("url", "time_minutes")
+    # Tắt log không cần thiết của Spark
+    spark.sparkContext.setLogLevel("ERROR")
 
-    df = df.withColumn("time_minutes", col("time_minutes").cast("int"))
-    df.createOrReplaceTempView("visits")
+    # Định nghĩa schema cho dữ liệu CSV
+    schema = StructType([
+        StructField("url", StringType(), True),
+        StructField("time", IntegerType(), True)
+    ])
 
-    print("\nTop 5 most visited:")
-    spark.sql("""
-        SELECT url,
-               COUNT(*) as visits,
-               SUM(time_minutes) as total_time
-        FROM visits
-        GROUP BY url
-        ORDER BY visits DESC
-        LIMIT 5
-    """).show(truncate=False)
+    # Đọc dữ liệu từ thư mục data
+    data = spark.read.csv("data/*.csv", schema=schema, header=True)
 
-    print("\nHigh engagement:")
-    spark.sql("""
-        SELECT url,
-               AVG(time_minutes) as avg_time
-        FROM visits
-        GROUP BY url
-        HAVING AVG(time_minutes) > 200
-        ORDER BY avg_time DESC
-    """).show(truncate=False)
+    # Tính toán thống kê: tổng, trung bình, tối đa, tối thiểu
+    stats = data.groupBy("url").agg(
+        spark_sum("time").alias("total_time"),
+        count("time").alias("visit_count"),
+        spark_round(avg("time"), 2).alias("avg_time"),
+        spark_max("time").alias("max_time"),
+        spark_min("time").alias("min_time")
+    )
 
-    spark.stop()
-    print("\n DONE SQL PIPELINE!")
+    # Hiển thị kết quả
+    stats.show(truncate=False)
 
+    # Định dạng và in kết quả
+    for row in stats.collect():
+        print(format_spark_row(row))
+
+    # Theo dõi tài nguyên sử dụng
+    elapsed_time = time.time() - start_time
+    memory_usage = process.memory_info().rss / (1024 * 1024)
+    print(f"Thời gian chạy: {elapsed_time:.2f} giây")
+    print(f"Bộ nhớ sử dụng: {memory_usage:.2f} MB")
 
 if __name__ == "__main__":
-    try:
-        run_spark_pipeline()
-        run_sql_pipeline()
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
+    run_simple_spark_pipeline()
